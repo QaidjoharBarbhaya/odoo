@@ -15,7 +15,7 @@ class ResConfigSettings(models.TransientModel):
 
     fail_counter = fields.Integer('Fail Mail', readonly=True)
     alias_domain = fields.Char('Alias Domain', help="If you have setup a catch-all email domain redirected to "
-                               "the Odoo server, enter the domain name here.", config_parameter='mail.catchall.domain')
+                               "the Odoo server, enter the domain name here.", default=lambda self: self.env.company.alias_domain)
 
     @api.model
     def get_values(self):
@@ -33,4 +33,5 @@ class ResConfigSettings(models.TransientModel):
 
     def set_values(self):
         super(ResConfigSettings, self).set_values()
-        self.env['ir.config_parameter'].set_param("mail.catchall.domain", self.alias_domain or '')
+        if self.alias_domain and self.alias_domain != self.env.company.alias_domain:
+            self.env.company.write({'alias_domain': self.alias_domain})

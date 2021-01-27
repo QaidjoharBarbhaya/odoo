@@ -315,7 +315,7 @@ class MailMail(models.Model):
                 ICP = self.env['ir.config_parameter'].sudo()
                 bounce_alias = ICP.get_param("mail.bounce.alias")
                 bounce_alias_static = tools.str2bool(ICP.get_param("mail.bounce.alias.static", "False"))
-                catchall_domain = ICP.get_param("mail.catchall.domain")
+                catchall_domain = self.env.company.alias_domain
                 if bounce_alias and catchall_domain:
                     if bounce_alias_static:
                         headers['Return-Path'] = '%s@%s' % (bounce_alias, catchall_domain)

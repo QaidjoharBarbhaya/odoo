@@ -353,7 +353,7 @@ class IrMailServer(models.Model):
         """
         force_smtp_from = self.env['ir.config_parameter'].sudo().get_param('mail.force.smtp.from')
         dynamic_smtp_from = self.env['ir.config_parameter'].sudo().get_param('mail.dynamic.smtp.from')
-        catchall_domain = self.env['ir.config_parameter'].sudo().get_param('mail.catchall.domain')
+        catchall_domain = self.env.company.alias_domain
 
         if force_smtp_from:
             rfc2822_force_smtp_from = extract_rfc2822_addresses(force_smtp_from)
@@ -383,7 +383,7 @@ class IrMailServer(models.Model):
         '''
         get_param = self.env['ir.config_parameter'].sudo().get_param
         postmaster = get_param('mail.bounce.alias', default='postmaster-odoo')
-        domain = get_param('mail.catchall.domain')
+        domain = self.env.company.alias_domain
         if postmaster and domain:
             return '%s@%s' % (postmaster, domain)
 
@@ -401,7 +401,7 @@ class IrMailServer(models.Model):
             ``--email-from`` CLI/config parameter.
         """
         get_param = self.env['ir.config_parameter'].sudo().get_param
-        domain = get_param('mail.catchall.domain')
+        domain = self.env.company.alias_domain
         email_from = get_param("mail.default.from")
         if email_from and domain:
             return "%s@%s" % (email_from, domain)

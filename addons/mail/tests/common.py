@@ -101,7 +101,7 @@ class MockEmail(common.BaseCase):
         cls.alias_catchall = 'catchall.test'
         cls.alias_bounce = 'bounce.test'
         cls.env['ir.config_parameter'].set_param('mail.bounce.alias', cls.alias_bounce)
-        cls.env['ir.config_parameter'].set_param('mail.catchall.domain', cls.alias_domain)
+        cls.env.company.write({'alias_domain': cls.alias_domain})
         cls.env['ir.config_parameter'].set_param('mail.catchall.alias', cls.alias_catchall)
         cls.mailer_daemon_email = formataddr(('MAILER-DAEMON', '%s@%s' % (cls.alias_bounce, cls.alias_domain)))
 

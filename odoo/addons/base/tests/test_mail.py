@@ -434,7 +434,7 @@ class EmailConfigCase(TransactionCase):
         """Email from setting is respected."""
         # ICP setting is more important
         ICP = self.env["ir.config_parameter"].sudo()
-        ICP.set_param("mail.catchall.domain", "example.org")
+        self.env.company.write({"alias_domain": "example.org"})
         ICP.set_param("mail.default.from", "icp")
         message = self.env["ir.mail_server"].build_email(
             False, "recipient@example.com", "Subject",
@@ -456,7 +456,7 @@ class EmailConfigCase(TransactionCase):
         # Standard case, no setting
         set_param('mail.force.smtp.from', False)
         set_param('mail.dynamic.smtp.from', False)
-        set_param('mail.catchall.domain', 'odoo.example.com')
+        self.env.company.write({'alias_domain': 'odoo.example.com'})
 
         email_from, return_path = get_email_from('admin@test.example.com')
         self.assertEqual(email_from, 'admin@test.example.com')
@@ -469,7 +469,7 @@ class EmailConfigCase(TransactionCase):
         # We always force the email FROM
         set_param('mail.force.smtp.from', 'email_force@domain.com')
         set_param('mail.dynamic.smtp.from', False)
-        set_param('mail.catchall.domain', 'odoo.example.com')
+        self.env.company.write({'alias_domain': 'odoo.example.com'})
 
         email_from, return_path = get_email_from('admin@test.example.com')
         self.assertEqual(email_from, '"admin@test.example.com" <email_force@domain.com>')
@@ -482,7 +482,7 @@ class EmailConfigCase(TransactionCase):
         # We always force the email FROM (notification email contains a name part)
         set_param('mail.force.smtp.from', '"Your notification bot" <email_force@domain.com>')
         set_param('mail.dynamic.smtp.from', False)
-        set_param('mail.catchall.domain', 'odoo.example.com')
+        self.env.company.write({'alias_domain': 'odoo.example.com'})
 
         email_from, return_path = get_email_from('"Admin" <admin@test.example.com>')
         self.assertEqual(email_from, '"Admin (admin@test.example.com)" <email_force@domain.com>',
@@ -492,7 +492,7 @@ class EmailConfigCase(TransactionCase):
         # We dynamically force the email FROM
         set_param('mail.force.smtp.from', False)
         set_param('mail.dynamic.smtp.from', 'notification@odoo.example.com')
-        set_param('mail.catchall.domain', 'odoo.example.com')
+        self.env.company.write({'alias_domain': 'odoo.example.com'})
 
         email_from, return_path = get_email_from('"Admin" <admin@test.example.com>')
         self.assertEqual(email_from, '"Admin (admin@test.example.com)" <notification@odoo.example.com>',
@@ -507,7 +507,7 @@ class EmailConfigCase(TransactionCase):
         # We dynamically force the email FROM (notification email contains a name part)
         set_param('mail.force.smtp.from', False)
         set_param('mail.dynamic.smtp.from', '"Your notification bot" <notification@odoo.example.com>')
-        set_param('mail.catchall.domain', 'odoo.example.com')
+        self.env.company.write({'alias_domain': 'odoo.example.com'})
 
         email_from, return_path = get_email_from('"Admin" <admin@test.example.com>')
         self.assertEqual(email_from, '"Admin (admin@test.example.com)" <notification@odoo.example.com>',
