@@ -15,8 +15,15 @@ class PayuMoneyController(http.Controller):
     @http.route(['/payment/payumoney/return', '/payment/payumoney/cancel', '/payment/payumoney/error'], type='http', auth='public', csrf=False)
     def payu_return(self, **post):
         """ PayUmoney."""
+        return werkzeug.utils.redirect('/payment/process')
+
+    @http.route(['/payment/payumoney/webhook'], type='json', auth='public')
+    def payu_webhook(self):
+        """ Create this webhook record under https://www.payu.in/business/settings/webhooks """
+        post = http.request.jsonrequest
         _logger.info(
             'PayUmoney: entering form_feedback with post data %s', pprint.pformat(post))
         if post:
+            if post.get('status'):
+                post['status'] = post['status'].lower()
             request.env['payment.transaction'].sudo().form_feedback(post, 'payumoney')
-        return werkzeug.utils.redirect('/payment/process')
